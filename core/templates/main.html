@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <link rel="stylesheet" href="{% static 'core/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+    <h1>Список продуктов</h1>
+    <input type="button" class="btn btn-primary btn-lg" value="Получить список продуктов" onclick="get_list()">
+
+    <ol id="data-list" class="list-group list-group-numbered"></ol>
+
+    <h1>Добавить новый продукт</h1>
+    <form id="create_form">
+      <div class="mb-3">
+        <label class="form-label">Название</label>
+        <input type="text" class="form-control" name="name">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Описание</label>
+        <input type="text" class="form-control" name="description">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Стоимость</label>
+        <input type="number" name="cost" class="form-control">
+      </div>
+
+      <button class="btn btn-primary" onclick="create_product()">Добавить</button>
+    </form>
+
+    <script>
+         function get_list() {
+            fetch('http://127.0.0.1:8000/products/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Не удалось получить список продуктов');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const dataList = document.getElementById('data-list');
+                data.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${item.name} - ${item.description}; ${item.cost} руб.`;
+                    listItem.classList.add("list-group-item")
+                    dataList.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+        }
+
+         function removeDivs() {
+            divs = document.getElementsByClassName('list-group-item');
+            for (var i = divs.length - 1; i > -1; i--) {
+                divs[i].parentNode.removeChild(divs[i]);
+            }
+         }
+
+         function create_product() {
+            const form = document.getElementById('create_form');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                fetch('http://127.0.0.1:8000/products/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Не удалось создать продукт');
+                    }
+                    return response.json();
+                })
+                .then(responseData => {
+                    console.log('Успех:', responseData);
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                });
+            });
+
+            const elements = document.querySelectorAll('li.list-group-item');
+            elements.forEach(element => {
+                element.remove();
+            });
+            setTimeout(get_list, 100);
+        }
+    </script>
+</body>
+</html>
