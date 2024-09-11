@@ -25,6 +25,6 @@ jobs:
         run: |
           python manage.py test
 
-      - name: Run flake8
+      - name: Ruff check
         run: |
           ruff check
