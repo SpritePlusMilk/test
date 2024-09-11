@@ -6,9 +6,7 @@ from core import views
 app_name = "core"
 
 router = DefaultRouter()
-router.register('products', views.ProductView, 'products')
+router.register("products", views.ProductView, "products")
 
-urlpatterns = [
-    path('', views.MainPage.as_view())
-]
+urlpatterns = [path("", views.MainPage.as_view())]
 urlpatterns += router.urls

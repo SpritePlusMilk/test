@@ -3,6 +3,7 @@ from rest_framework.serializers import ModelSerializer, Serializer
 
 from core import models
 
+
 class Product(ModelSerializer):
     class Meta:
         model = models.Product

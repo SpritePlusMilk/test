@@ -8,10 +8,10 @@ from core import models, serializers
 
 
 class MainPage(TemplateView):
-    template_name = 'main.html'
+    template_name = "main.html"
 
 
 class ProductView(CreateModelMixin, ListModelMixin, GenericViewSet):
     queryset = models.Product.objects.all()
     serializer_class = serializers.Product
-    permission_classes = (AllowAny, )
+    permission_classes = (AllowAny,)
